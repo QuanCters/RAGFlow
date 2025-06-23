@@ -71,9 +71,15 @@ class RedisDB:
 
     def __open__(self):
         try:
+            host_port = self.config.get("host", "localhost:6379").split(":")
+            host = host_port[0] or "localhost"
+            port = int(host_port[1]) if len(host_port) > 1 else 6379
+
             self.REDIS = redis.StrictRedis(
-                host=self.config["host"].split(":")[0],
-                port=int(self.config.get("host", ":6379").split(":")[1]),
+                # host=self.config["host"].split(":")[0],
+                # port=int(self.config.get("host", ":6379").split(":")[1]),
+                host=host,
+                port=port,
                 db=int(self.config.get("db", 1)),
                 password=self.config.get("password"),
                 decode_responses=True,

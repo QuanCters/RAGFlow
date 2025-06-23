@@ -427,8 +427,7 @@ Output:
     res = {}
     for k, v in obj.items():
         try:
-            if int(v) > 0:
-                res[str(k)] = int(v)
+            res[str(k)] = int(v)
         except Exception:
             pass
     return res

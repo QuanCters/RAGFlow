@@ -41,14 +41,10 @@ elif DOC_ENGINE == 'opensearch':
 elif DOC_ENGINE == 'infinity':
     INFINITY = get_base_config("infinity", {"uri": "infinity:23817"})
 
-if STORAGE_IMPL_TYPE in ['AZURE_SPN', 'AZURE_SAS']:
-    AZURE = get_base_config("azure", {})
-elif STORAGE_IMPL_TYPE == 'AWS_S3':
-    S3 = get_base_config("s3", {})
-elif STORAGE_IMPL_TYPE == 'MINIO':
-    MINIO = decrypt_database_config(name="minio")
-elif STORAGE_IMPL_TYPE == 'OSS':
-    OSS = get_base_config("oss", {})
+AZURE = get_base_config("azure", {})
+S3 = get_base_config("s3", {})
+MINIO = decrypt_database_config(name="minio")
+OSS = get_base_config("oss", {})
 
 try:
     REDIS = decrypt_database_config(name="redis")

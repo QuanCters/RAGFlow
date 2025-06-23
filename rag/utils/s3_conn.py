@@ -52,8 +52,8 @@ class RAGFlowS3:
             # If the prefix path is set, use the prefix path.
             # The bucket passed from the upstream call is 
             # used as the file prefix. This is especially useful when you're using the default bucket
-            if self.prefix_path:
-                fnm = f"{self.prefix_path}/{bucket}/{fnm}"
+            if self.prefix_path and fnm:
+                fnm = f"{self.prefix_path}/{fnm.lstrip('/')}"
             return method(self, bucket, fnm, *args, **kwargs)
         return wrapper
 
@@ -184,3 +184,23 @@ class RAGFlowS3:
                 self.__open__()
                 time.sleep(1)
         return
+
+    @use_default_bucket
+    def create_folder(self, bucket, folder_path):
+        """Tạo folder trên S3 (thực chất là object rỗng với kết thúc '/')"""
+        if not folder_path.endswith('/'):
+            folder_path += '/'
+        
+        try:
+            # Kiểm tra folder đã tồn tại chưa
+            if not self.obj_exist(bucket, folder_path):
+                self.conn.put_object(
+                    Bucket=bucket,
+                    Key=folder_path,
+                    Body=b'',
+                    ContentLength=0
+                )
+            return True
+        except Exception as e:
+            logging.error(f"Failed to create folder {folder_path}: {str(e)}")
+            return False

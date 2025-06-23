@@ -37,10 +37,14 @@ redis:
 #   port: 5432
 #   max_connections: 100
 #   stale_timeout: 30
-# s3:
-#   access_key: 'access_key'
-#   secret_key: 'secret_key'
-#   region: 'region'
+s3:
+  access_key: 'test'
+  secret_key: 'test'
+  endpoint_url: 'http://localhost:4566'
+  # bucket: 'my-bucket'
+  region: 'us-east-1'
+  # signature_version: "s3v4"
+  # prefix_path: "uploads"
 # oss:
 #   access_key: 'access_key'
 #   secret_key: 'secret_key'

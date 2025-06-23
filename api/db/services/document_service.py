@@ -516,7 +516,8 @@ class DocumentService(CommonService):
                 if msg:
                     info["progress_msg"] = msg
                 else:
-                    info["progress_msg"] = "%d tasks are ahead in the queue..."%get_queue_length(priority)
+                    queue_length = get_queue_length(priority)
+                    info["progress_msg"] = f"{queue_length} tasks are ahead in the queue..."
                 cls.update_by_id(d["id"], info)
             except Exception as e:
                 if str(e).find("'0'") < 0:
@@ -566,8 +567,14 @@ def queue_raptor_o_graphrag_tasks(doc, ty, priority):
 
 
 def get_queue_length(priority):
-    group_info = REDIS_CONN.queue_info(get_svr_queue_name(priority), SVR_CONSUMER_GROUP_NAME)
-    return int(group_info.get("lag", 0))
+    try:
+        group_info = REDIS_CONN.queue_info(get_svr_queue_name(priority), SVR_CONSUMER_GROUP_NAME)
+        if group_info is None:
+            return 0
+        return int(group_info.get("lag", 0)) 
+    except Exception:
+        return 0
+    
 
 
 def doc_upload_and_parse(conversation_id, file_objs, user_id):

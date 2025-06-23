@@ -31,7 +31,7 @@ from api.db.services.file_service import FileService
 from api import settings
 from api.utils.api_utils import get_json_result
 from api.utils.file_utils import filename_type
-from rag.utils.storage_factory import STORAGE_IMPL
+from rag.utils.storage_factory import StorageFactory
 
 
 @manager.route('/upload', methods=['POST'])  # noqa: F821
@@ -54,6 +54,9 @@ def upload():
             return get_json_result(
                 data=False, message='No file selected!', code=settings.RetCode.ARGUMENT_ERROR)
     file_res = []
+
+    storage_client = StorageFactory.get_provider(current_user.id)
+
     try:
         e, pf_folder = FileService.get_by_id(pf_id)
         if not e:
@@ -92,7 +95,7 @@ def upload():
             # file type
             filetype = filename_type(file_obj_names[file_len - 1])
             location = file_obj_names[file_len - 1]
-            while STORAGE_IMPL.obj_exist(last_folder.id, location):
+            while storage_client.obj_exist(last_folder.id, location):
                 location += "_"
             blob = file_obj.read()
             filename = duplicate_name(
@@ -110,7 +113,7 @@ def upload():
                 "size": len(blob),
             }
             file = FileService.insert(file)
-            STORAGE_IMPL.put(last_folder.id, location, blob)
+            storage_client.put(last_folder.id, location, blob)
             file_res.append(file.to_json())
         return get_json_result(data=file_res)
     except Exception as e:
@@ -238,6 +241,7 @@ def get_all_parent_folders():
 def rm():
     req = request.json
     file_ids = req["file_ids"]
+    storage_client = StorageFactory.get_provider(current_user.id)
     try:
         for file_id in file_ids:
             e, file = FileService.get_by_id(file_id)
@@ -254,10 +258,10 @@ def rm():
                     e, file = FileService.get_by_id(inner_file_id)
                     if not e:
                         return get_data_error_result(message="File not found!")
-                    STORAGE_IMPL.rm(file.parent_id, file.location)
+                    storage_client.rm(file.parent_id, file.location)
                 FileService.delete_folder_by_pf_id(current_user.id, file_id)
             else:
-                STORAGE_IMPL.rm(file.parent_id, file.location)
+                storage_client.rm(file.parent_id, file.location)
                 if not FileService.delete(file):
                     return get_data_error_result(
                         message="Database error (File removal)!")
@@ -325,13 +329,14 @@ def rename():
 def get(file_id):
     try:
         e, file = FileService.get_by_id(file_id)
+        storage_client = StorageFactory.get_provider(current_user.id)
         if not e:
             return get_data_error_result(message="Document not found!")
 
-        blob = STORAGE_IMPL.get(file.parent_id, file.location)
+        blob = storage_client.get(file.parent_id, file.location)
         if not blob:
             b, n = File2DocumentService.get_storage_address(file_id=file_id)
-            blob = STORAGE_IMPL.get(b, n)
+            blob = storage_client.get(b, n)
 
         response = flask.make_response(blob)
         ext = re.search(r"\.([^.]+)$", file.name)

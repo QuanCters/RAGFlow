@@ -26,7 +26,3 @@ export const removeUselessFieldsFromValues = (values: any, prefix?: string) => {
 
   return nextValues;
 };
-
-export function buildOptions(data: Record<string, any>) {
-  return Object.values(data).map((val) => ({ label: val, value: val }));
-}

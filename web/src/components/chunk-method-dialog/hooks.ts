@@ -1,5 +1,5 @@
 import { useSelectParserList } from '@/hooks/user-setting-hooks';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const ParserListMap = new Map([
   [
@@ -80,8 +80,15 @@ const getParserList = (
   return parserList.filter((x) => values?.some((y) => y === x.value));
 };
 
-export const useFetchParserListOnMount = (documentExtension: string) => {
+export const useFetchParserListOnMount = (
+  documentId: string,
+  parserId: string,
+  documentExtension: string,
+  // form: FormInstance,
+) => {
+  const [selectedTag, setSelectedTag] = useState('');
   const parserList = useSelectParserList();
+  // const handleChunkMethodSelectChange = useHandleChunkMethodSelectChange(form); // TODO
 
   const nextParserList = useMemo(() => {
     const key = [...ParserListMap.keys()].find((x) =>
@@ -98,7 +105,16 @@ export const useFetchParserListOnMount = (documentExtension: string) => {
     );
   }, [parserList, documentExtension]);
 
-  return { parserList: nextParserList };
+  useEffect(() => {
+    setSelectedTag(parserId);
+  }, [parserId, documentId]);
+
+  const handleChange = (tag: string) => {
+    // handleChunkMethodSelectChange(tag);
+    setSelectedTag(tag);
+  };
+
+  return { parserList: nextParserList, handleChange, selectedTag };
 };
 
 const hideAutoKeywords = ['qa', 'table', 'resume', 'knowledge_graph', 'tag'];

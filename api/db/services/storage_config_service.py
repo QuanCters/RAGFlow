@@ -6,6 +6,7 @@ from api.db import FileType
 from api.db.services.common_service import CommonService
 from api.utils import current_timestamp, datetime_format
 
+
 class StorageConfigService(CommonService):
     """Service class for managing provider-related database operations.
 
@@ -15,6 +16,7 @@ class StorageConfigService(CommonService):
     Attributes:
         model: The StorageConfig model class for database operations.
     """
+
     model = StorageConfig
 
     @classmethod
@@ -23,47 +25,34 @@ class StorageConfigService(CommonService):
         """get storage config of tenant
 
         Args:
-            user_id : User ID 
-        
+            user_id : User ID
+
         Returns:
             dict: Storage config or None
         """
         try:
-            storage_config = cls.model.select(
-                cls.model.provider,
-                cls.model.config
-            ).where(
-                (cls.model.user_id == user_id)
-            ).dicts().get()
+            storage_config = cls.model.select(cls.model.provider, cls.model.config).where((cls.model.user_id == user_id)).dicts().get()
 
             if not storage_config.get("provider"):
                 return None
 
-            return {
-                'type': storage_config['provider'],
-                'settings': storage_config['config'] or {}
-            }
+            return {"type": storage_config["provider"], "settings": storage_config["config"] or {}}
         except cls.model.DoesNotExist:
-            return None 
+            return None
 
     @classmethod
     @DB.connection_context()
-    def update_provider(cls, user_id, provider, config = None):
+    def update_provider(cls, user_id, provider, config=None):
         """Update storage config and provider
 
         Args:
             user_id: User ID
             provider: storage type (AZURE, AWS, MINIO, OSS)
             config: specific config of provider
-        """  
-        update_data = {
-            "provider": provider,
-            "config": config
-        }
+        """
+        update_data = {"provider": provider, "config": config}
 
-        cls.model.update(update_data).where(
-            (cls.model.user_id == user_id)
-        ).execute()
+        cls.model.update(update_data).where((cls.model.user_id == user_id)).execute()
 
     @classmethod
     @DB.connection_context()
@@ -78,7 +67,6 @@ class StorageConfigService(CommonService):
             raise RuntimeError("Database error (StorageConfig)!")
         return StorageConfig(**storage_config)
 
-    
     @classmethod
     @DB.connection_context()
     def update_by_id(cls, pid, data):
@@ -90,22 +78,15 @@ class StorageConfigService(CommonService):
     @classmethod
     @DB.connection_context()
     def migrate_user_files(cls, user_id, from_provider, to_provider):
-        from rag.utils.storage_factory import StorageProviderRegistry 
+        from rag.utils.storage_factory import StorageProviderRegistry
+
         try:
             items = File.select().where(
-                (File.created_by == user_id) | 
-                (File.tenant_id.in_(
-                    Tenant.select(Tenant.id).where(
-                        UserTenant.select(UserTenant.tenant_id).where(
-                            UserTenant.user_id == user_id  
-                            ) 
-                        )
-                    )
-                )
-            ) 
+                (File.created_by == user_id) | (File.tenant_id.in_(Tenant.select(Tenant.id).where(UserTenant.select(UserTenant.tenant_id).where(UserTenant.user_id == user_id))))
+            )
 
-            folders = [item for item in items if item.type == FileType.FOLDER.value]            
-            files = [item for item in items if item.type != FileType.FOLDER.value]            
+            folders = [item for item in items if item.type == FileType.FOLDER.value]
+            files = [item for item in items if item.type != FileType.FOLDER.value]
 
             from_client = StorageProviderRegistry.get_provider(from_provider)
             to_client = StorageProviderRegistry.get_provider(to_provider)
@@ -115,9 +96,9 @@ class StorageConfigService(CommonService):
 
             for file in files:
                 service.migrate_file(file, from_client, to_client)
-        except Exception as e:
+        except Exception:
             raise
-    
+
     def migrate_file(cls, file: File, from_client, to_client):
         try:
             file_data = from_client.get(file.parent_id, file.location)
@@ -127,13 +108,13 @@ class StorageConfigService(CommonService):
         except Exception as e:
             logging.error(f"Migration failed for file {file.id}: {str(e)}")
             raise
-    
+
     def migrate_folders(cls, folders, from_client, to_client):
         sorted_folders = cls.sort_folders_by_depth(folders)
 
         for folder in sorted_folders:
-            to_client.create_folder(folder.parent_id, folder.location) 
-    
+            to_client.create_folder(folder.parent_id, folder.location)
+
     def sort_folders_by_depth(cls, folders):
         if not folders:
             return []
@@ -145,28 +126,28 @@ class StorageConfigService(CommonService):
             if folder.parent_id in folder_map:
                 children_map[folder.parent_id] = []
             children_map[folder.parent_id].append(folder.id)
-        
+
         roots = [f for f in folders if not f.parent_id or f.parent_id not in folder_map]
-        
+
         sorted_folders = []
         queue = deque(roots)
         processed = set()
-        
+
         while queue:
             folder_id = queue.popleft()
-            
+
             if folder_id in processed or folder_id not in folder_map:
                 continue
 
             folder = folder_map[folder_id]
             sorted_folders.append(folder)
             processed.add(folder_id)
-            
+
             if folder_id in children_map:
                 for child_id in children_map[folder_id]:
                     if child_id not in processed:
                         queue.append(child_id)
-        
+
         for folder in folders:
             if folder.id not in processed:
                 sorted_folders.append(folder)

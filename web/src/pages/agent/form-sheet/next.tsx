@@ -9,16 +9,21 @@ import { useTranslate } from '@/hooks/common-hooks';
 import { IModalProps } from '@/interfaces/common';
 import { RAGFlowNodeType } from '@/interfaces/database/flow';
 import { cn } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { lowerFirst } from 'lodash';
 import { Play, X } from 'lucide-react';
-import { BeginId, Operator } from '../constant';
+import { useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { BeginId, Operator, operatorMap } from '../constant';
 import { AgentFormContext } from '../context';
 import { RunTooltip } from '../flow-tooltip';
 import { useHandleNodeNameChange } from '../hooks';
+import { useHandleFormValuesChange } from '../hooks/use-watch-form-change';
 import OperatorIcon from '../operator-icon';
 import { needsSingleStepDebugging } from '../utils';
 import SingleDebugDrawer from './single-debug-drawer';
 import { useFormConfigMap } from './use-form-config-map';
+import { useValues } from './use-values';
 
 interface IProps {
   node?: RAGFlowNodeType;
@@ -45,12 +50,61 @@ const FormSheet = ({
 
   const OperatorForm = currentFormMap.component ?? EmptyContent;
 
+  const values = useValues(node);
+
+  const form = useForm({
+    values: values,
+    resolver: zodResolver(currentFormMap.schema),
+  });
+
   const { name, handleNameBlur, handleNameChange } = useHandleNodeNameChange({
     id: node?.id,
     data: node?.data,
   });
 
+  const previousId = useRef<string | undefined>(node?.id);
+
   const { t } = useTranslate('flow');
+
+  const { handleValuesChange } = useHandleFormValuesChange(
+    operatorName,
+    node?.id,
+    form,
+  );
+
+  // useEffect(() => {
+  //   if (visible && !form.formState.isDirty) {
+  //     // if (node?.id !== previousId.current) {
+  //     //   form.reset();
+  //     //   form.clearErrors();
+  //     // }
+
+  //     const formData = node?.data?.form;
+
+  //     if (operatorName === Operator.Categorize) {
+  //       const items = buildCategorizeListFromObject(
+  //         get(node, 'data.form.category_description', {}),
+  //       );
+  //       if (isPlainObject(formData)) {
+  //         console.info('xxx');
+  //         const nextValues = {
+  //           ...omit(formData, 'category_description'),
+  //           items,
+  //         };
+
+  //         form.reset(nextValues);
+  //       }
+  //     } else if (operatorName === Operator.Message) {
+  //       form.reset({
+  //         ...formData,
+  //         content: convertToObjectArray(formData.content),
+  //       });
+  //     } else {
+  //       form.reset(node?.data?.form);
+  //     }
+  //     previousId.current = node?.id;
+  //   }
+  // }, [visible, form, node?.data?.form, node?.id, node, operatorName]);
 
   return (
     <Sheet open={visible} modal={false}>
@@ -59,7 +113,10 @@ const FormSheet = ({
           <SheetTitle className="hidden"></SheetTitle>
           <section className="flex-col border-b py-2 px-5">
             <div className="flex items-center gap-2 pb-3">
-              <OperatorIcon name={operatorName}></OperatorIcon>
+              <OperatorIcon
+                name={operatorName}
+                color={operatorMap[operatorName]?.color}
+              ></OperatorIcon>
               <div className="flex items-center gap-1 flex-1">
                 <label htmlFor="">{t('title')}</label>
                 {node?.id === BeginId ? (
@@ -89,7 +146,11 @@ const FormSheet = ({
         <section className="pt-4 overflow-auto max-h-[85vh]">
           {visible && (
             <AgentFormContext.Provider value={node}>
-              <OperatorForm node={node} key={node?.id}></OperatorForm>
+              <OperatorForm
+                onValuesChange={handleValuesChange}
+                form={form}
+                node={node}
+              ></OperatorForm>
             </AgentFormContext.Provider>
           )}
         </section>

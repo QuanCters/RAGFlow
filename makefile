@@ -3,5 +3,7 @@ run:
 
 up:
 	docker compose -f docker/docker-compose-base.yml up -d
-.PHONY: run up
 
+down: 
+	docker compose -f docker/docker-compose-base.yml down -v 
+.PHONY: run up down

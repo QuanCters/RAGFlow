@@ -551,7 +551,6 @@ This auto-tagging feature enhances retrieval by adding another layer of domain-s
     },
     setting: {
       profile: 'Profile',
-      avatar: 'Avatar',
       profileDescription: 'Update your photo and personal details here.',
       maxTokens: 'Max Tokens',
       maxTokensMessage: 'Max Tokens is required',
@@ -561,6 +560,7 @@ This auto-tagging feature enhances retrieval by adding another layer of domain-s
       password: 'Password',
       passwordDescription:
         'Please enter your current password to change your password.',
+      object: 'Object storages',
       model: 'Model providers',
       modelDescription: 'Configure model parameters and API KEY here.',
       team: 'Team',

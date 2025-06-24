@@ -119,7 +119,7 @@ def kb_prompt(kbinfos, max_tokens):
     doc2chunks = defaultdict(lambda: {"chunks": [], "meta": []})
     for i, ck in enumerate(kbinfos["chunks"][:chunks_num]):
         cnt = f"---\nID: {i}\n" + (f"URL: {ck['url']}\n" if "url" in ck else "")
-        cnt += re.sub(r"( style=\"[^\"]+\"|</?(html|body|head|title)>|<!DOCTYPE html>)", " ", ck["content_with_weight"], flags=re.DOTALL|re.IGNORECASE)
+        cnt += re.sub(r"( style=\"[^\"]+\"|</?(html|body|head|title)>|<!DOCTYPE html>)", " ", ck["content_with_weight"], flags=re.DOTALL | re.IGNORECASE)
         doc2chunks[ck["docnm_kwd"]]["chunks"].append(cnt)
         doc2chunks[ck["docnm_kwd"]]["meta"] = docs.get(ck["doc_id"], {})
 
@@ -325,7 +325,7 @@ Act as a streamlined multilingual translator. Strictly output translations separ
 
 1. Accept batch translation requests in format:
 [source text]
-=== 
+===
 [target languages separated by commas]
 
 2. Always maintain:
@@ -334,8 +334,8 @@ Act as a streamlined multilingual translator. Strictly output translations separ
 - Cultural context appropriateness
 
 3. Output format:
-[language1 translation] 
-### 
+[language1 translation]
+###
 [language1 translation]
 
 **Examples:**

@@ -649,19 +649,12 @@ def user_register(user_id, user):
                 }
             )
 
-    storage_config = {
-        "user_id": user_id,
-        "provider": "MINIO",
-        "config": {},
-        "created_at": datetime.now()
-    }
     if not UserService.save(**user):
         return
     TenantService.insert(**tenant)
     UserTenantService.insert(**usr_tenant)
     TenantLLMService.insert_many(tenant_llm)
     FileService.insert(file)
-    StorageConfigService.insert(storage_config)
     return UserService.query(email=user["email"])
 
 
@@ -797,86 +790,67 @@ def tenant_info():
         return server_error_response(e)
 
 
-@manager.route("/is_superuser", methods=["GET"])  # noqa: F821
-@login_required
-def is_superuser():
-    user_info = UserService.get_is_superuser(current_user.id)
-    response = {
-      "id": str(current_user.id),
-      "is_superuser": user_info
-    }
-    return get_json_result(data=response)
-
-
-@manager.route("/list_non_superusers", methods=["GET"])
-@login_required
-def list_non_superusers():
-    users = UserService.get_non_superusers()
-    return get_json_result(data=[{"id": u.id, "name": u.nickname} for u in users])
-
-
-@manager.route("/set_storage", methods=["POST"])
+# @manager.route("/is_superuser", methods=["GET"])  # noqa: F821
 # @login_required
-@validate_request("provider")
-def set_storage():
-    req = request.json
-    new_provider = req["provider"]
-    user_id = req["user_id"]
+# def is_superuser():
+#     user_info = UserService.get_is_superuser(current_user.id)
+#     response = {"id": str(current_user.id), "is_superuser": user_info}
+#     return get_json_result(data=response)
 
-    try:
-        # Find existing storage config
-        storage_configs = StorageConfigService.query(user_id=user_id)
-        
-        if storage_configs:
-            # Update existing config
-            old_provider = storage_configs[0].provider
-            update_data = {"provider": new_provider}
-            StorageConfigService.update_by_id(user_id, update_data)
-            Thread(target=StorageConfigService().migrate_user_files, args=(
-                user_id,
-                old_provider,
-                new_provider
-            )).start()
-        else:
-            # Create new config if not exists
-            new_config = {
-                "user_id": user_id,
-                "provider": new_provider,
-                "config": {},
-                "created_at": datetime.now()
-            }
-            StorageConfigService.insert(new_config)
 
-        return get_json_result(data=True)
-    except Exception as e:
-        logging.exception(f"Failed to update storage provider: {str(e)}")
-        return get_json_result(
-            data=False,
-            message=f"Failed to update storage provider: {str(e)}",
-            code=settings.RetCode.EXCEPTION_ERROR
-        ) 
+# @manager.route("/list_non_superusers", methods=["GET"])
+# @login_required
+# def list_non_superusers():
+#     users = UserService.get_non_superusers()
+#     return get_json_result(data=[{"id": u.id, "name": u.nickname} for u in users])
 
-@manager.route("/get_storage", methods=["POST"])
-@login_required
-def get_storage():
-    try:
-        req = request.json
-        user_id = req.get("user_id", "")
-        
-        storage_configs = StorageConfigService.query(user_id=user_id)
-        
-        if storage_configs:
-            return get_json_result(data={"provider": storage_configs[0].provider})
-        else:
-            return get_json_result(data={"provider": "MINIO"})
-            
-    except Exception as e:
-        logging.exception(f"Failed to get storage provider: {str(e)}")
-        return get_json_result(
-            data=False,
-            message=f"Failed to get storage provider: {str(e)}",
-            code=settings.RetCode.EXCEPTION_ERROR
-        )
+
+# @manager.route("/set_storage", methods=["POST"])
+# # @login_required
+# @validate_request("provider")
+# def set_storage():
+#     req = request.json
+#     new_provider = req["provider"]
+#     user_id = req["user_id"]
+
+#     try:
+#         # Find existing storage config
+#         storage_configs = StorageConfigService.query(user_id=user_id)
+
+#         if storage_configs:
+#             # Update existing config
+#             old_provider = storage_configs[0].provider
+#             update_data = {"provider": new_provider}
+#             StorageConfigService.update_by_id(user_id, update_data)
+#             Thread(target=StorageConfigService().migrate_user_files, args=(user_id, old_provider, new_provider)).start()
+#         else:
+#             # Create new config if not exists
+#             new_config = {"user_id": user_id, "provider": new_provider, "config": {}, "created_at": datetime.now()}
+#             StorageConfigService.insert(new_config)
+
+#         return get_json_result(data=True)
+#     except Exception as e:
+#         logging.exception(f"Failed to update storage provider: {str(e)}")
+#         return get_json_result(data=False, message=f"Failed to update storage provider: {str(e)}", code=settings.RetCode.EXCEPTION_ERROR)
+
+
+# @manager.route("/get_storage", methods=["POST"])
+# @login_required
+# def get_storage():
+#     try:
+#         req = request.json
+#         user_id = req.get("user_id", "")
+
+#         storage_configs = StorageConfigService.query(user_id=user_id)
+
+#         if storage_configs:
+#             return get_json_result(data={"provider": storage_configs[0].provider})
+#         else:
+#             return get_json_result(data={"provider": "MINIO"})
+
+#     except Exception as e:
+#         logging.exception(f"Failed to get storage provider: {str(e)}")
+#         return get_json_result(data=False, message=f"Failed to get storage provider: {str(e)}", code=settings.RetCode.EXCEPTION_ERROR)
 
 
 @manager.route("/set_tenant_info", methods=["POST"])  # noqa: F821

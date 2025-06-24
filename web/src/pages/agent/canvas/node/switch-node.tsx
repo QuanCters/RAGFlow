@@ -1,16 +1,16 @@
 import { IconFont } from '@/components/icon-font';
+import { useTheme } from '@/components/theme-provider';
 import { Card, CardContent } from '@/components/ui/card';
 import { ISwitchCondition, ISwitchNode } from '@/interfaces/database/flow';
-import { NodeProps, Position } from '@xyflow/react';
+import { Handle, NodeProps, Position } from '@xyflow/react';
+import classNames from 'classnames';
 import { memo, useCallback } from 'react';
-import { NodeHandleId, SwitchOperatorOptions } from '../../constant';
+import { SwitchOperatorOptions } from '../../constant';
 import { useGetComponentLabelByValue } from '../../hooks/use-get-begin-query';
-import { CommonHandle } from './handle';
 import { RightHandleStyle } from './handle-icon';
-import NodeHeader from './node-header';
-import { NodeWrapper } from './node-wrapper';
-import { ToolBar } from './toolbar';
-import { useBuildSwitchHandlePositions } from './use-build-switch-handle-positions';
+import { useBuildSwitchHandlePositions } from './hooks';
+import styles from './index.less';
+import NodeHeader, { ToolBar } from './node-header';
 
 const getConditionKey = (idx: number, length: number) => {
   if (idx === 0 && length !== 1) {
@@ -58,17 +58,32 @@ const ConditionBlock = ({
 
 function InnerSwitchNode({ id, data, selected }: NodeProps<ISwitchNode>) {
   const { positions } = useBuildSwitchHandlePositions({ data, id });
+  const { theme } = useTheme();
   return (
-    <ToolBar selected={selected} id={id} label={data.label}>
-      <NodeWrapper>
-        <CommonHandle
+    <ToolBar selected={selected}>
+      <section
+        className={classNames(
+          styles.logicNode,
+          theme === 'dark' ? styles.dark : '',
+          {
+            [styles.selectedNode]: selected,
+          },
+          'group/operator hover:bg-slate-100',
+        )}
+      >
+        <Handle
           type="target"
           position={Position.Left}
           isConnectable
-          nodeId={id}
-          id={NodeHandleId.End}
-        ></CommonHandle>
-        <NodeHeader id={id} name={data.name} label={data.label}></NodeHeader>
+          className={styles.handle}
+          id={'a'}
+        ></Handle>
+        <NodeHeader
+          id={id}
+          name={data.name}
+          label={data.label}
+          className={styles.nodeHeader}
+        ></NodeHeader>
         <section className="gap-2.5 flex flex-col">
           {positions.map((position, idx) => {
             return (
@@ -88,21 +103,20 @@ function InnerSwitchNode({ id, data, selected }: NodeProps<ISwitchNode>) {
                     ></ConditionBlock>
                   )}
                 </section>
-                <CommonHandle
+                <Handle
                   key={position.text}
                   id={position.text}
                   type="source"
                   position={Position.Right}
                   isConnectable
+                  className={styles.handle}
                   style={{ ...RightHandleStyle, top: position.top }}
-                  nodeId={id}
-                  isConnectableEnd={false}
-                ></CommonHandle>
+                ></Handle>
               </div>
             );
           })}
         </section>
-      </NodeWrapper>
+      </section>
     </ToolBar>
   );
 }

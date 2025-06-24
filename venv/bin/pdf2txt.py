@@ -1,6 +1,7 @@
 #!/home/quan/ragflow/venv/bin/python3
 """A command line tool for extracting text and images from PDF and
 output it to plain text, html, xml or tags."""
+
 import argparse
 import logging
 import sys
@@ -40,7 +41,7 @@ def extract_text(
     output_dir: Optional[str] = None,
     debug: bool = False,
     disable_caching: bool = False,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> AnyIO:
     if not files:
         raise ValueError("Must provide files to work upon!")
@@ -94,9 +95,7 @@ def create_parser() -> argparse.ArgumentParser:
         help="If caching or resources, such as fonts, should be disabled.",
     )
 
-    parse_params = parser.add_argument_group(
-        "Parser", description="Used during PDF parsing"
-    )
+    parse_params = parser.add_argument_group("Parser", description="Used during PDF parsing")
     parse_params.add_argument(
         "--page-numbers",
         type=int,
@@ -108,9 +107,7 @@ def create_parser() -> argparse.ArgumentParser:
         "--pagenos",
         "-p",
         type=str,
-        help="A comma-separated list of page numbers to parse. "
-        "Included for legacy applications, use --page-numbers "
-        "for more idiomatic argument entry.",
+        help="A comma-separated list of page numbers to parse. Included for legacy applications, use --page-numbers for more idiomatic argument entry.",
     )
     parse_params.add_argument(
         "--maxpages",
@@ -131,14 +128,11 @@ def create_parser() -> argparse.ArgumentParser:
         "-R",
         default=0,
         type=int,
-        help="The number of degrees to rotate the PDF "
-        "before other types of processing.",
+        help="The number of degrees to rotate the PDF before other types of processing.",
     )
 
     la_params = LAParams()  # will be used for defaults
-    la_param_group = parser.add_argument_group(
-        "Layout analysis", description="Used during layout analysis."
-    )
+    la_param_group = parser.add_argument_group("Layout analysis", description="Used during layout analysis.")
     la_param_group.add_argument(
         "--no-laparams",
         "-n",
@@ -157,18 +151,14 @@ def create_parser() -> argparse.ArgumentParser:
         "--line-overlap",
         type=float,
         default=la_params.line_overlap,
-        help="If two characters have more overlap than this they "
-        "are considered to be on the same line. The overlap is specified "
-        "relative to the minimum height of both characters.",
+        help="If two characters have more overlap than this they are considered to be on the same line. The overlap is specified relative to the minimum height of both characters.",
     )
     la_param_group.add_argument(
         "--char-margin",
         "-M",
         type=float,
         default=la_params.char_margin,
-        help="If two characters are closer together than this margin they "
-        "are considered to be part of the same line. The margin is "
-        "specified relative to the width of the character.",
+        help="If two characters are closer together than this margin they are considered to be part of the same line. The margin is specified relative to the width of the character.",
     )
     la_param_group.add_argument(
         "--word-margin",
@@ -185,9 +175,7 @@ def create_parser() -> argparse.ArgumentParser:
         "-L",
         type=float,
         default=la_params.line_margin,
-        help="If two lines are close together they are considered to "
-        "be part of the same paragraph. The margin is specified "
-        "relative to the height of a line.",
+        help="If two lines are close together they are considered to be part of the same paragraph. The margin is specified relative to the height of a line.",
     )
     la_param_group.add_argument(
         "--boxes-flow",
@@ -210,16 +198,13 @@ def create_parser() -> argparse.ArgumentParser:
         help="If layout analysis should be performed on text in figures.",
     )
 
-    output_params = parser.add_argument_group(
-        "Output", description="Used during output generation."
-    )
+    output_params = parser.add_argument_group("Output", description="Used during output generation.")
     output_params.add_argument(
         "--outfile",
         "-o",
         type=str,
         default="-",
-        help="Path to file where output is written. "
-        'Or "-" (default) to write to stdout.',
+        help='Path to file where output is written. Or "-" (default) to write to stdout.',
     )
     output_params.add_argument(
         "--output_type",
@@ -239,8 +224,7 @@ def create_parser() -> argparse.ArgumentParser:
         "--output-dir",
         "-O",
         default=None,
-        help="The output directory to put extracted images in. If not given, "
-        "images are not extracted.",
+        help="The output directory to put extracted images in. If not given, images are not extracted.",
     )
     output_params.add_argument(
         "--layoutmode",
@@ -260,16 +244,14 @@ def create_parser() -> argparse.ArgumentParser:
         "-s",
         type=float,
         default=1.0,
-        help="The amount of zoom to use when generating html file. "
-        "Only used when output_type is html.",
+        help="The amount of zoom to use when generating html file. Only used when output_type is html.",
     )
     output_params.add_argument(
         "--strip-control",
         "-S",
         default=False,
         action="store_true",
-        help="Remove control statement from text. "
-        "Only used when output_type is xml.",
+        help="Remove control statement from text. Only used when output_type is xml.",
     )
 
     return parser

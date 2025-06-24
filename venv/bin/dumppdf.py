@@ -1,5 +1,6 @@
 #!/home/quan/ragflow/venv/bin/python3
 """Extract pdf structure in XML format"""
+
 import logging
 import os.path
 import re
@@ -37,7 +38,7 @@ def dumpxml(out: TextIO, obj: object, codec: Optional[str] = None) -> None:
 
     if isinstance(obj, dict):
         out.write('<dict size="%d">\n' % len(obj))
-        for (k, v) in obj.items():
+        for k, v in obj.items():
             out.write("<key>%s</key>\n" % k)
             out.write("<value>")
             dumpxml(out, v)
@@ -95,9 +96,7 @@ def dumpxml(out: TextIO, obj: object, codec: Optional[str] = None) -> None:
     raise TypeError(obj)
 
 
-def dumptrailers(
-    out: TextIO, doc: PDFDocument, show_fallback_xref: bool = False
-) -> None:
+def dumptrailers(out: TextIO, doc: PDFDocument, show_fallback_xref: bool = False) -> None:
     for xref in doc.xrefs:
         if not isinstance(xref, PDFXRefFallback) or show_fallback_xref:
             out.write("<trailer>\n")
@@ -105,11 +104,7 @@ def dumptrailers(
             out.write("\n</trailer>\n\n")
     no_xrefs = all(isinstance(xref, PDFXRefFallback) for xref in doc.xrefs)
     if no_xrefs and not show_fallback_xref:
-        msg = (
-            "This PDF does not have an xref. Use --show-fallback-xref if "
-            "you want to display the content of a fallback xref that "
-            "contains all objects."
-        )
+        msg = "This PDF does not have an xref. Use --show-fallback-xref if you want to display the content of a fallback xref that contains all objects."
         logger.warning(msg)
     return
 
@@ -154,10 +149,7 @@ def dumpoutline(
     fp = open(fname, "rb")
     parser = PDFParser(fp)
     doc = PDFDocument(parser, password)
-    pages = {
-        page.pageid: pageno
-        for (pageno, page) in enumerate(PDFPage.create_pages(doc), 1)
-    }
+    pages = {page.pageid: pageno for (pageno, page) in enumerate(PDFPage.create_pages(doc), 1)}
 
     def resolve_dest(dest: object) -> Any:
         if isinstance(dest, (str, bytes)):
@@ -173,7 +165,7 @@ def dumpoutline(
     try:
         outlines = doc.get_outlines()
         outfp.write("<outlines>\n")
-        for (level, title, dest, a, se) in outlines:
+        for level, title, dest, a, se in outlines:
             pageno = None
             if dest:
                 dest = resolve_dest(dest)
@@ -212,16 +204,10 @@ def extractembedded(fname: str, password: str, extractdir: str) -> None:
         fileref = obj["EF"].get("UF") or obj["EF"].get("F")
         fileobj = doc.getobj(fileref.objid)
         if not isinstance(fileobj, PDFStream):
-            error_msg = (
-                "unable to process PDF: reference for %r is not a "
-                "PDFStream" % filename
-            )
+            error_msg = "unable to process PDF: reference for %r is not a PDFStream" % filename
             raise PDFValueError(error_msg)
         if fileobj.get("Type") is not LITERAL_EMBEDDEDFILE:
-            raise PDFValueError(
-                "unable to process PDF: reference for %r "
-                "is not an EmbeddedFile" % (filename)
-            )
+            raise PDFValueError("unable to process PDF: reference for %r is not an EmbeddedFile" % (filename))
         path = os.path.join(extractdir, "%.6d-%s" % (objid, filename))
         if os.path.exists(path):
             raise IOError("file exists: %r" % path)
@@ -239,11 +225,7 @@ def extractembedded(fname: str, password: str, extractdir: str) -> None:
         for xref in doc.xrefs:
             for objid in xref.get_objids():
                 obj = doc.getobj(objid)
-                if (
-                    objid not in extracted_objids
-                    and isinstance(obj, dict)
-                    and obj.get("Type") is LITERAL_FILESPEC
-                ):
+                if objid not in extracted_objids and isinstance(obj, dict) and obj.get("Type") is LITERAL_FILESPEC:
                     extracted_objids.add(objid)
                     extract1(objid, obj)
     return
@@ -268,7 +250,7 @@ def dumppdf(
             obj = doc.getobj(objid)
             dumpxml(outfp, obj, codec=codec)
     if pagenos:
-        for (pageno, page) in enumerate(PDFPage.create_pages(doc)):
+        for pageno, page in enumerate(PDFPage.create_pages(doc)):
             if pageno in pagenos:
                 if codec:
                     for obj in page.contents:
@@ -317,13 +299,9 @@ def create_parser() -> ArgumentParser:
         action="store_true",
         help="Extract structure of outline",
     )
-    procedure_parser.add_argument(
-        "--extract-embedded", "-E", type=str, help="Extract embedded files"
-    )
+    procedure_parser.add_argument("--extract-embedded", "-E", type=str, help="Extract embedded files")
 
-    parse_params = parser.add_argument_group(
-        "Parser", description="Used during PDF parsing"
-    )
+    parse_params = parser.add_argument_group("Parser", description="Used during PDF parsing")
     parse_params.add_argument(
         "--page-numbers",
         type=int,
@@ -335,9 +313,7 @@ def create_parser() -> ArgumentParser:
         "--pagenos",
         "-p",
         type=str,
-        help="A comma-separated list of page numbers to parse. Included for "
-        "legacy applications, use --page-numbers for more idiomatic "
-        "argument entry.",
+        help="A comma-separated list of page numbers to parse. Included for legacy applications, use --page-numbers for more idiomatic argument entry.",
     )
     parse_params.add_argument(
         "--objects",
@@ -355,9 +331,7 @@ def create_parser() -> ArgumentParser:
     parse_params.add_argument(
         "--show-fallback-xref",
         action="store_true",
-        help="Additionally show the fallback xref. Use this if the PDF "
-        "has zero or only invalid xref's. This setting is ignored if "
-        "--extract-toc or --extract-embedded is used.",
+        help="Additionally show the fallback xref. Use this if the PDF has zero or only invalid xref's. This setting is ignored if --extract-toc or --extract-embedded is used.",
     )
     parse_params.add_argument(
         "--password",
@@ -367,16 +341,13 @@ def create_parser() -> ArgumentParser:
         help="The password to use for decrypting PDF file.",
     )
 
-    output_params = parser.add_argument_group(
-        "Output", description="Used during output generation."
-    )
+    output_params = parser.add_argument_group("Output", description="Used during output generation.")
     output_params.add_argument(
         "--outfile",
         "-o",
         type=str,
         default="-",
-        help='Path to file where output is written. Or "-" (default) to '
-        "write to stdout.",
+        help='Path to file where output is written. Or "-" (default) to write to stdout.',
     )
     codec_parser = output_params.add_mutually_exclusive_group()
     codec_parser.add_argument(

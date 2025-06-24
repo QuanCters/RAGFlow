@@ -505,7 +505,6 @@ export default {
     },
     setting: {
       profile: 'Hồ sơ',
-      avatar: 'Avatar',
       profileDescription: 'Cập nhật ảnh và thông tin cá nhân của bạn tại đây.',
       maxTokens: 'Token tối đa',
       maxTokensMessage: 'Token tối đa là bắt buộc',

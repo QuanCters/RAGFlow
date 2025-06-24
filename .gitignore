@@ -102,6 +102,8 @@ build/Release
 node_modules/
 jspm_packages/
 
+web/node_modules/
+
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
 
@@ -193,4 +195,3 @@ dist
 
 # SvelteKit build / generate output
 .svelte-kit
-

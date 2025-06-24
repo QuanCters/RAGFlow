@@ -38,7 +38,7 @@ Released on June 23, 2025.
 
 ### Added models
 
-- Qwen 3 Embedding. [#8184](https://github.com/infiniflow/ragflow/pull/8184) 
+- Qwen 3 Embedding. [#8184](https://github.com/infiniflow/ragflow/pull/8184)
 - Voyage Multimodal 3. [#7987](https://github.com/infiniflow/ragflow/pull/7987)
 
 ## v0.19.0

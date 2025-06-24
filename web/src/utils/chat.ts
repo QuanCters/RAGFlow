@@ -64,7 +64,6 @@ export function replaceThinkToSection(text: string = '') {
 export function setInitialChatVariableEnabledFieldValue(
   field: ChatVariableEnabledField,
 ) {
-  return false;
   return field !== ChatVariableEnabledField.MaxTokensEnabled;
 }
 
@@ -72,15 +71,4 @@ const ShowImageFields = ['image', 'table'];
 
 export function showImage(filed?: string) {
   return ShowImageFields.some((x) => x === filed);
-}
-
-export function setChatVariableEnabledFieldValuePage() {
-  const variableCheckBoxFieldMap = Object.values(
-    ChatVariableEnabledField,
-  ).reduce<Record<string, boolean>>((pre, cur) => {
-    pre[cur] = cur !== ChatVariableEnabledField.MaxTokensEnabled;
-    return pre;
-  }, {});
-
-  return variableCheckBoxFieldMap;
 }

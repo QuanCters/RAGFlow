@@ -10,15 +10,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHandleMenuClick } from './hooks';
 
-type PropType = {
-  refreshCount?: number;
-};
-
-export function SideBar({ refreshCount }: PropType) {
+export function SideBar() {
   const pathName = useSecondPathName();
   const { handleMenuClick } = useHandleMenuClick();
-  // refreshCount: be for avatar img sync update on top left
-  const { data } = useFetchKnowledgeBaseConfiguration(refreshCount);
+  const { data } = useFetchKnowledgeBaseConfiguration();
   const { t } = useTranslation();
 
   const items = useMemo(() => {

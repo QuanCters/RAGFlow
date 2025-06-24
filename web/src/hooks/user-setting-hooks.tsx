@@ -14,10 +14,12 @@ import userService, {
   addTenantUser,
   agreeTenant,
   deleteTenantUser,
+  getCurrentUser,
   listTenant,
   listTenantUser,
 } from '@/services/user-service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRequest } from 'ahooks';
 import { Modal, message } from 'antd';
 import DOMPurify from 'dompurify';
 import { isEmpty } from 'lodash';
@@ -46,6 +48,15 @@ export const useFetchUserInfo = (): ResponseGetType<IUserInfo> => {
   });
 
   return { data, loading };
+};
+
+export const useFetchCurrentUser = () => {
+  return useRequest(getCurrentUser, {
+    manual: false,
+    onError: (error) => {
+      console.error('Failed to fetch user:', error);
+    },
+  });
 };
 
 export const useFetchTenantInfo = (

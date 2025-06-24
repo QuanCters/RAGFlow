@@ -4,7 +4,6 @@ import {
   Connection,
   Edge,
   EdgeChange,
-  EdgeMouseHandler,
   OnConnect,
   OnEdgesChange,
   OnNodesChange,
@@ -28,7 +27,6 @@ import {
   generateNodeNamesWithIncreasingIndex,
   getOperatorIndex,
   isEdgeEqual,
-  mapEdgeMouseEvent,
 } from './utils';
 
 export type RFState = {
@@ -37,12 +35,8 @@ export type RFState = {
   selectedNodeIds: string[];
   selectedEdgeIds: string[];
   clickedNodeId: string; // currently selected node
-  clickedToolId: string; // currently selected tool id
   onNodesChange: OnNodesChange<RAGFlowNodeType>;
   onEdgesChange: OnEdgesChange;
-  onEdgeMouseEnter?: EdgeMouseHandler<Edge>;
-  /** This event handler is called when mouse of a user leaves an edge */
-  onEdgeMouseLeave?: EdgeMouseHandler<Edge>;
   onConnect: OnConnect;
   setNodes: (nodes: RAGFlowNodeType[]) => void;
   setEdges: (edges: Edge[]) => void;
@@ -79,8 +73,6 @@ export type RFState = {
   updateNodeName: (id: string, name: string) => void;
   generateNodeName: (name: string) => string;
   setClickedNodeId: (id?: string) => void;
-  setClickedToolId: (id?: string) => void;
-  findUpstreamNodeById: (id?: string | null) => RAGFlowNodeType | undefined;
 };
 
 // this is our useStore hook that we can use in our components to get parts of the store and call actions
@@ -92,7 +84,6 @@ const useGraphStore = create<RFState>()(
       selectedNodeIds: [] as string[],
       selectedEdgeIds: [] as string[],
       clickedNodeId: '',
-      clickedToolId: '',
       onNodesChange: (changes) => {
         set({
           nodes: applyNodeChanges(changes, get().nodes),
@@ -102,20 +93,6 @@ const useGraphStore = create<RFState>()(
         set({
           edges: applyEdgeChanges(changes, get().edges),
         });
-      },
-      onEdgeMouseEnter: (event, edge) => {
-        const { edges, setEdges } = get();
-        const edgeId = edge.id;
-
-        // Updates edge
-        setEdges(mapEdgeMouseEvent(edges, edgeId, true));
-      },
-      onEdgeMouseLeave: (event, edge) => {
-        const { edges, setEdges } = get();
-        const edgeId = edge.id;
-
-        // Updates edge
-        setEdges(mapEdgeMouseEvent(edges, edgeId, false));
       },
       onConnect: (connection: Connection) => {
         const {
@@ -487,14 +464,6 @@ const useGraphStore = create<RFState>()(
         const { nodes } = get();
 
         return generateNodeNamesWithIncreasingIndex(name, nodes);
-      },
-      setClickedToolId: (id?: string) => {
-        set({ clickedToolId: id });
-      },
-      findUpstreamNodeById: (id) => {
-        const { edges, getNode } = get();
-        const edge = edges.find((x) => x.target === id);
-        return getNode(edge?.source);
       },
     })),
     { name: 'graph', trace: true },

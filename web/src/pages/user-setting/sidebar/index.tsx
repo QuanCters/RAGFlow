@@ -2,12 +2,16 @@ import { Domain } from '@/constants/common';
 import { useTranslate } from '@/hooks/common-hooks';
 import { useLogout } from '@/hooks/login-hooks';
 import { useSecondPathName } from '@/hooks/route-hook';
-import { useFetchSystemVersion } from '@/hooks/user-setting-hooks';
+import {
+  useFetchCurrentUser,
+  useFetchSystemVersion,
+} from '@/hooks/user-setting-hooks';
 import type { MenuProps } from 'antd';
 import { Flex, Menu } from 'antd';
 import React, { useEffect, useMemo } from 'react';
 import { useNavigate } from 'umi';
 import {
+  UserAdminSettingIconMap,
   UserSettingBaseKey,
   UserSettingIconMap,
   UserSettingRouteKey,
@@ -22,6 +26,8 @@ const SideBar = () => {
   const { logout } = useLogout();
   const { t } = useTranslate('setting');
   const { version, fetchSystemVersion } = useFetchSystemVersion();
+  const { data: userInfo } = useFetchCurrentUser();
+  const isSuperuser = userInfo?.data.data.is_superuser;
 
   useEffect(() => {
     if (location.host !== Domain) {
@@ -52,9 +58,16 @@ const SideBar = () => {
     } as MenuItem;
   }
 
-  const items: MenuItem[] = Object.values(UserSettingRouteKey).map((value) =>
+  let items: MenuItem[] = Object.values(UserSettingRouteKey).map((value) =>
     getItem(value, value, UserSettingIconMap[value]),
   );
+
+  if (isSuperuser) {
+    items = [
+      ...items,
+      getItem('object', 'object', UserAdminSettingIconMap['object']),
+    ];
+  }
 
   const handleMenuClick: MenuProps['onClick'] = ({ key }) => {
     if (key === UserSettingRouteKey.Logout) {

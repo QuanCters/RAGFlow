@@ -1,6 +1,5 @@
 import {
   BaseEdge,
-  Edge,
   EdgeLabelRenderer,
   EdgeProps,
   getBezierPath,
@@ -9,9 +8,7 @@ import useGraphStore from '../../store';
 
 import { useTheme } from '@/components/theme-provider';
 import { useFetchAgent } from '@/hooks/use-agent-request';
-import { cn } from '@/lib/utils';
 import { useMemo } from 'react';
-import { NodeHandleId, Operator } from '../../constant';
 import styles from './index.less';
 
 export function ButtonEdge({
@@ -27,9 +24,7 @@ export function ButtonEdge({
   style = {},
   markerEnd,
   selected,
-  data,
-  sourceHandleId,
-}: EdgeProps<Edge<{ isHovered: boolean }>>) {
+}: EdgeProps) {
   const deleteEdgeById = useGraphStore((state) => state.deleteEdgeById);
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
@@ -77,14 +72,6 @@ export function ButtonEdge({
     return {};
   }, [source, target, graphPath]);
 
-  const visible = useMemo(() => {
-    return (
-      data?.isHovered &&
-      sourceHandleId !== NodeHandleId.Tool && // The connection between the agent node and the tool node does not need to display the delete button
-      !target.startsWith(Operator.Tool)
-    );
-  }, [data?.isHovered, sourceHandleId, target]);
-
   return (
     <>
       <BaseEdge
@@ -92,7 +79,6 @@ export function ButtonEdge({
         markerEnd={markerEnd}
         style={{ ...style, ...selectedStyle, ...highlightStyle }}
       />
-
       <EdgeLabelRenderer>
         <div
           style={{
@@ -107,11 +93,9 @@ export function ButtonEdge({
           className="nodrag nopan"
         >
           <button
-            className={cn(
-              theme === 'dark' ? styles.edgeButtonDark : styles.edgeButton,
-              'invisible',
-              { visible },
-            )}
+            className={
+              theme === 'dark' ? styles.edgeButtonDark : styles.edgeButton
+            }
             type="button"
             onClick={onEdgeClick}
           >

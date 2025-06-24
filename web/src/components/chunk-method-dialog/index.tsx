@@ -88,7 +88,12 @@ export function ChunkMethodDialog({
 }: IProps) {
   const { t } = useTranslation();
 
-  const { parserList } = useFetchParserListOnMount(documentExtension);
+  const { parserList } = useFetchParserListOnMount(
+    documentId,
+    parserId,
+    documentExtension,
+    // form,
+  );
 
   const { data: knowledgeDetails } = useFetchKnowledgeBaseConfiguration();
 

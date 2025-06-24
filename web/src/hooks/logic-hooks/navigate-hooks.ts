@@ -64,8 +64,7 @@ export const useNavigatePage = () => {
   const navigateToChunkParsedResult = useCallback(
     (id: string, knowledgeId?: string) => () => {
       navigate(
-        // `${Routes.ParsedResult}/${id}?${QueryStringMap.KnowledgeId}=${knowledgeId}`,
-        `${Routes.ParsedResult}/chunks?id=${knowledgeId}&doc_id=${id}`,
+        `${Routes.ParsedResult}/${id}?${QueryStringMap.KnowledgeId}=${knowledgeId}`,
       );
     },
     [navigate],

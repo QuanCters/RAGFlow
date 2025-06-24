@@ -194,6 +194,33 @@ services:
     networks:
       - ragflow
     restart: on-failure
+  
+  localstack:
+    container_name: ragflow-localstack
+    image: localstack/localstack:2.3.0
+    ports:
+      - "${LOCALSTACK_PORT:-4566}:4566"
+    env_file: .env
+    environment:
+      - SERVICES=s3
+      - AWS_DEFAULT_REGION=${AWS_REGION:-us-east-1}
+      - EDGE_PORT=4566
+      - LOCALSTACK_HOSTNAME=localstack
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - TZ=${TIMEZONE}
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+    volumes:
+      - localstack_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - ragflow
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    restart: on-failure
 
 
 
@@ -209,6 +236,8 @@ volumes:
   minio_data:
     driver: local
   redis_data:
+    driver: local
+  localstack_data:
     driver: local
 
 networks:

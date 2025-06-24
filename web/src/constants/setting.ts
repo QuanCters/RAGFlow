@@ -10,6 +10,17 @@ export enum UserSettingRouteKey {
   Logout = 'logout',
 }
 
+export enum UserAdminSettingRouteKey {
+  Profile = 'profile',
+  Password = 'password',
+  Model = 'model',
+  System = 'system',
+  Api = 'api',
+  Team = 'team',
+  Object = 'object',
+  Logout = 'logout',
+}
+
 export const ProfileSettingBaseKey = 'profile-setting';
 
 export enum ProfileSettingRouteKey {

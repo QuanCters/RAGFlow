@@ -143,6 +143,10 @@ export const deleteTenantUser = ({
 
 export const listTenant = () => request.get(api.listTenant);
 
+export async function getCurrentUser() {
+  return request('/v1/user/is_superuser');
+}
+
 export const agreeTenant = (tenantId: string) =>
   request.put(api.agreeTenant(tenantId));
 

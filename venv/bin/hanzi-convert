@@ -16,9 +16,11 @@
 #
 from __future__ import unicode_literals, absolute_import
 
-__prog__ = 'hanzi-convert'
+__prog__ = "hanzi-convert"
 
-import os, sys, codecs
+import os
+import sys
+import codecs
 import argparse
 import textwrap
 import warnings
@@ -37,24 +39,19 @@ class Main(object):
 
         :returns :       a parser.parse_arg() object
         """
-        desc = textwrap.dedent("""\
+        desc = textwrap.dedent(
+            """\
                 Simplified and Traditional Chinese Character Conversion
                 Version {} (By {})
 
                 Converting to Traditional Hanzi by default
-                """.format(__version__, __author__))
-        parser = argparse.ArgumentParser(prog=__prog__,
-                formatter_class=argparse.RawDescriptionHelpFormatter,
-                description=desc)
-        parser.add_argument('infile', type=str,
-                help='filename | "-", corresponds to stdin')
-        parser.add_argument('-o', '--output', dest='outfile',
-                default='',
-                help='filename to save output, default to stdout')
-        parser.add_argument('-s', '--simplified', action='store_true',
-                help='convert to simplified')
-        parser.add_argument('-v', '--version', action='version',
-                version='%(prog)s Version ' + __version__)
+                """.format(__version__, __author__)
+        )
+        parser = argparse.ArgumentParser(prog=__prog__, formatter_class=argparse.RawDescriptionHelpFormatter, description=desc)
+        parser.add_argument("infile", type=str, help='filename | "-", corresponds to stdin')
+        parser.add_argument("-o", "--output", dest="outfile", default="", help="filename to save output, default to stdout")
+        parser.add_argument("-s", "--simplified", action="store_true", help="convert to simplified")
+        parser.add_argument("-v", "--version", action="version", version="%(prog)s Version " + __version__)
         return parser.parse_args()
 
     def process(self, infile, outfile, simplified):
@@ -70,7 +67,7 @@ class Main(object):
         func = HanziConv.toTraditional
         if simplified:
             func = HanziConv.toSimplified
-        converted = ''
+        converted = ""
         for line in data:
             converted += func(line)
         self.write(converted, outfile)
@@ -81,15 +78,15 @@ class Main(object):
         :params filename: name of input file ('-' for stdin)
         :returns :        html as string
         """
-        encoding = 'utf-8'
+        encoding = "utf-8"
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            if filename == '-':
-                filename = ''
-                sys.stderr.write('Press Ctrl-D with finished' + os.linesep)
+            if filename == "-":
+                filename = ""
+                sys.stderr.write("Press Ctrl-D with finished" + os.linesep)
                 sys.stderr.flush()
 
-        if sys.version >= '3':
+        if sys.version >= "3":
             data = self.py3GetData(filename)
         else:
             data = self.py2GetData(filename)
@@ -102,10 +99,10 @@ class Main(object):
         :params filename: name of input file ('-' for stdin)
         :returns :        data in
         """
-        encoding = 'utf-8'
-        data = ''
+        encoding = "utf-8"
+        data = ""
         if filename:
-            with open(filename, 'rU') as fh:
+            with open(filename, "rU") as fh:
                 fh = codecs.getreader(encoding)(fh)
                 data = fh.read()
         else:
@@ -118,12 +115,12 @@ class Main(object):
         in `filename` as `encoding`
 
         :params filename: name of input file ('-' for stdin)
-        :returns :        data in 
+        :returns :        data in
         """
-        encoding = 'utf-8'
-        data = ''
+        encoding = "utf-8"
+        data = ""
         if filename:
-            with open(filename, 'r', encoding=encoding) as fh:
+            with open(filename, "r", encoding=encoding) as fh:
                 data = fh.read()
         else:
             data = sys.stdin.read()
@@ -136,7 +133,7 @@ class Main(object):
         :params filename:   name of output file ('' for stdout)
         :returns :          None
         """
-        if sys.version >= '3':
+        if sys.version >= "3":
             self.py3WriteData(data, filename)
         else:
             self.py2WriteData(data, filename)
@@ -149,7 +146,7 @@ class Main(object):
         :returns :          None
         """
         if filename:
-            with codecs.open(filename, 'wU', encoding='utf-8') as fh:
+            with codecs.open(filename, "wU", encoding="utf-8") as fh:
                 fh.write(data)
         else:
             sys.stdout = codecs.getwriter("utf-8")(sys.stdout)
@@ -164,12 +161,12 @@ class Main(object):
         :returns :          None
         """
         if filename:
-            with open(filename, 'w', encoding='utf-8') as fh:
+            with open(filename, "w", encoding="utf-8") as fh:
                 fh.write(data)
         else:
             sys.stdout.write(data)
             sys.stdout.flush()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Main().run()

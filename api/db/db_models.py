@@ -520,7 +520,7 @@ class StorageConfig(DataBaseModel):
 
     def __str__(self):
         return "Storage config" + self.provider
-    
+
     class Meta:
         db_table = "storage_config"
 
@@ -620,6 +620,14 @@ class Knowledgebase(DataBaseModel):
     parser_config = JSONField(null=False, default={"pages": [[1, 1000000]]})
     pagerank = IntegerField(default=0, index=False)
     status = CharField(max_length=1, null=True, help_text="is it validate(0: wasted, 1: validate)", default="1", index=True)
+
+    storage_type = CharField(max_length=50, default="buildint")
+    endpoint = CharField(max_length=255, null=False)
+    bucket_name = CharField(120)
+    access_key = CharField(120)
+    secret_key = CharField(120)
+    region = CharField(50)
+    custom_config = JSONField()
 
     def __str__(self):
         return self.name

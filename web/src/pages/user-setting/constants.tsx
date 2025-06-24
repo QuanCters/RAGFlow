@@ -7,7 +7,10 @@ import {
   TeamIcon,
 } from '@/assets/icon/Icon';
 import { LLMFactory } from '@/constants/llm';
-import { UserSettingRouteKey } from '@/constants/setting';
+import {
+  UserAdminSettingRouteKey,
+  UserSettingRouteKey,
+} from '@/constants/setting';
 import { MonitorOutlined } from '@ant-design/icons';
 
 export const UserSettingIconMap = {
@@ -18,6 +21,19 @@ export const UserSettingIconMap = {
   [UserSettingRouteKey.Team]: <TeamIcon />,
   [UserSettingRouteKey.Logout]: <LogOutIcon />,
   [UserSettingRouteKey.Api]: <ApiIcon />,
+};
+
+export const UserAdminSettingIconMap = {
+  [UserAdminSettingRouteKey.Profile]: <ProfileIcon />,
+  [UserAdminSettingRouteKey.Password]: <PasswordIcon />,
+  [UserAdminSettingRouteKey.Model]: <ModelProviderIcon />,
+  [UserAdminSettingRouteKey.System]: (
+    <MonitorOutlined style={{ fontSize: 24 }} />
+  ),
+  [UserAdminSettingRouteKey.Team]: <TeamIcon />,
+  [UserAdminSettingRouteKey.Logout]: <LogOutIcon />,
+  [UserAdminSettingRouteKey.Object]: <ApiIcon />,
+  [UserAdminSettingRouteKey.Api]: <ApiIcon />,
 };
 
 export * from '@/constants/setting';

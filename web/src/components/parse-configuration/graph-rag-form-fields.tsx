@@ -58,27 +58,17 @@ export function UseGraphRagFormField() {
       control={form.control}
       name="parser_config.graphrag.use_graphrag"
       render={({ field }) => (
-        <FormItem defaultChecked={false} className=" items-center space-y-0 ">
-          <div className="flex items-center">
-            <FormLabel
-              tooltip={t('useGraphRagTip')}
-              className="text-sm text-muted-foreground whitespace-nowrap w-1/4"
-            >
-              {t('useGraphRag')}
-            </FormLabel>
-            <div className="w-3/4">
-              <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                ></Switch>
-              </FormControl>
-            </div>
-          </div>
-          <div className="flex pt-1">
-            <div className="w-1/4"></div>
-            <FormMessage />
-          </div>
+        <FormItem defaultChecked={false}>
+          <FormLabel tooltip={t('useGraphRagTip')}>
+            {t('useGraphRag')}
+          </FormLabel>
+          <FormControl>
+            <Switch
+              checked={field.value}
+              onCheckedChange={field.onChange}
+            ></Switch>
+          </FormControl>
+          <FormMessage />
         </FormItem>
       )}
     />
@@ -122,33 +112,25 @@ const GraphRagItems = ({
             control={form.control}
             name="parser_config.graphrag.method"
             render={({ field }) => (
-              <FormItem className=" items-center space-y-0 ">
-                <div className="flex items-center">
-                  <FormLabel
-                    className="text-sm text-muted-foreground whitespace-nowrap w-1/4"
-                    tooltip={renderWideTooltip(
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: t('graphRagMethodTip'),
-                        }}
-                      ></div>,
-                    )}
-                  >
-                    {t('graphRagMethod')}
-                  </FormLabel>
-                  <div className="w-3/4">
-                    <FormControl>
-                      <RAGFlowSelect
-                        {...field}
-                        options={methodOptions}
-                      ></RAGFlowSelect>
-                    </FormControl>
-                  </div>
-                </div>
-                <div className="flex pt-1">
-                  <div className="w-1/4"></div>
-                  <FormMessage />
-                </div>
+              <FormItem>
+                <FormLabel
+                  tooltip={renderWideTooltip(
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: t('graphRagMethodTip'),
+                      }}
+                    ></div>,
+                  )}
+                >
+                  {t('graphRagMethod')}
+                </FormLabel>
+                <FormControl>
+                  <RAGFlowSelect
+                    {...field}
+                    options={methodOptions}
+                  ></RAGFlowSelect>
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -157,27 +139,17 @@ const GraphRagItems = ({
             control={form.control}
             name="parser_config.graphrag.resolution"
             render={({ field }) => (
-              <FormItem className=" items-center space-y-0 ">
-                <div className="flex items-center">
-                  <FormLabel
-                    tooltip={renderWideTooltip('resolutionTip')}
-                    className="text-sm text-muted-foreground whitespace-nowrap w-1/4"
-                  >
-                    {t('resolution')}
-                  </FormLabel>
-                  <div className="w-3/4">
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      ></Switch>
-                    </FormControl>
-                  </div>
-                </div>
-                <div className="flex pt-1">
-                  <div className="w-1/4"></div>
-                  <FormMessage />
-                </div>
+              <FormItem>
+                <FormLabel tooltip={renderWideTooltip('resolutionTip')}>
+                  {t('resolution')}
+                </FormLabel>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  ></Switch>
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -186,27 +158,17 @@ const GraphRagItems = ({
             control={form.control}
             name="parser_config.graphrag.community"
             render={({ field }) => (
-              <FormItem className=" items-center space-y-0 ">
-                <div className="flex items-center">
-                  <FormLabel
-                    tooltip={renderWideTooltip('communityTip')}
-                    className="text-sm text-muted-foreground whitespace-nowrap w-1/4"
-                  >
-                    {t('community')}
-                  </FormLabel>
-                  <div className="w-3/4">
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      ></Switch>
-                    </FormControl>
-                  </div>
-                </div>
-                <div className="flex pt-1">
-                  <div className="w-1/4"></div>
-                  <FormMessage />
-                </div>
+              <FormItem>
+                <FormLabel tooltip={renderWideTooltip('communityTip')}>
+                  {t('community')}
+                </FormLabel>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  ></Switch>
+                </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />

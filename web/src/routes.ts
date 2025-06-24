@@ -49,7 +49,6 @@ const routes = [
       {
         path: '/knowledge',
         component: '@/pages/knowledge',
-        // component: '@/pages/knowledge/datasets',
       },
       {
         path: '/knowledge',
@@ -94,7 +93,6 @@ const routes = [
           { path: '/user-setting', redirect: '/user-setting/profile' },
           {
             path: '/user-setting/profile',
-            // component: '@/pages/user-setting/setting-profile',
             component: '@/pages/user-setting/setting-profile',
           },
           {
@@ -120,6 +118,10 @@ const routes = [
           {
             path: '/user-setting/api',
             component: '@/pages/user-setting/setting-api',
+          },
+          {
+            path: '/user-setting/object',
+            component: '@/pages/user-setting/setting-object',
           },
         ],
       },
@@ -263,11 +265,6 @@ const routes = [
     ],
   },
   {
-    path: `${Routes.ParsedResult}/chunks`,
-    layout: false,
-    component: `@/pages${Routes.Chunk}/parsed-result/add-knowledge/components/knowledge-chunk`,
-  },
-  {
     path: Routes.Chunk,
     layout: false,
     routes: [
@@ -275,10 +272,10 @@ const routes = [
         path: Routes.Chunk,
         component: `@/pages${Routes.Chunk}`,
         routes: [
-          // {
-          //   path: `${Routes.ParsedResult}/:id`,
-          //   component: `@/pages${Routes.Chunk}/parsed-result`,
-          // },
+          {
+            path: `${Routes.ParsedResult}/:id`,
+            component: `@/pages${Routes.Chunk}/parsed-result`,
+          },
           {
             path: `${Routes.ChunkResult}/:id`,
             component: `@/pages${Routes.Chunk}/chunk-result`,

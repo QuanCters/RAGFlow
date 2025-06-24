@@ -21,7 +21,6 @@ import {
   ISwitchForm,
   RAGFlowNodeType,
 } from '@/interfaces/database/flow';
-import { setChatVariableEnabledFieldValuePage } from '@/utils/chat';
 import { message } from 'antd';
 import { humanId } from 'human-id';
 import { get, lowerFirst } from 'lodash';
@@ -272,13 +271,11 @@ export const useHandleFormValuesChange = (id?: string) => {
         'parameter' in changedValues &&
         changedValues['parameter'] in settledModelVariableMap
       ) {
-        const enabledValues = setChatVariableEnabledFieldValuePage();
         nextValues = {
           ...values,
           ...settledModelVariableMap[
             changedValues['parameter'] as keyof typeof settledModelVariableMap
           ],
-          ...enabledValues,
         };
       }
       if (id) {

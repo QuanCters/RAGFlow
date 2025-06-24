@@ -1,44 +1,55 @@
+import { useTheme } from '@/components/theme-provider';
 import { IBeginNode } from '@/interfaces/database/flow';
-import { NodeProps, Position } from '@xyflow/react';
+import { Handle, NodeProps, Position } from '@xyflow/react';
 import { Flex } from 'antd';
+import classNames from 'classnames';
 import get from 'lodash/get';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   BeginQueryType,
   BeginQueryTypeIconMap,
-  NodeHandleId,
   Operator,
+  operatorMap,
 } from '../../constant';
 import { BeginQuery } from '../../interface';
 import OperatorIcon from '../../operator-icon';
-import { CommonHandle } from './handle';
 import { RightHandleStyle } from './handle-icon';
 import styles from './index.less';
-import { NodeWrapper } from './node-wrapper';
 
 // TODO: do not allow other nodes to connect to this node
-function InnerBeginNode({ data, id }: NodeProps<IBeginNode>) {
+function InnerBeginNode({ selected, data }: NodeProps<IBeginNode>) {
   const { t } = useTranslation();
   const query: BeginQuery[] = get(data, 'form.query', []);
-
+  const { theme } = useTheme();
   return (
-    <NodeWrapper>
-      <CommonHandle
+    <section
+      className={classNames(
+        styles.ragNode,
+        theme === 'dark' ? styles.dark : '',
+        {
+          [styles.selectedNode]: selected,
+        },
+      )}
+    >
+      <Handle
         type="source"
         position={Position.Right}
         isConnectable
+        className={styles.handle}
         style={RightHandleStyle}
-        nodeId={id}
-        id={NodeHandleId.Start}
-      ></CommonHandle>
+      ></Handle>
 
-      <section className="flex items-center justify-center gap-2">
-        <OperatorIcon name={data.label as Operator}></OperatorIcon>
+      <Flex align="center" justify={'center'} gap={10}>
+        <OperatorIcon
+          name={data.label as Operator}
+          fontSize={24}
+          color={operatorMap[data.label as Operator].color}
+        ></OperatorIcon>
         <div className="truncate text-center font-semibold text-sm">
           {t(`flow.begin`)}
         </div>
-      </section>
+      </Flex>
       <Flex gap={8} vertical className={styles.generateParameters}>
         {query.map((x, idx) => {
           const Icon = BeginQueryTypeIconMap[x.type as BeginQueryType];
@@ -57,7 +68,7 @@ function InnerBeginNode({ data, id }: NodeProps<IBeginNode>) {
           );
         })}
       </Flex>
-    </NodeWrapper>
+    </section>
   );
 }
 

@@ -84,8 +84,6 @@ export enum Operator {
   Code = 'Code',
   WaitingDialogue = 'WaitingDialogue',
   Agent = 'Agent',
-  Tool = 'Tool',
-  Tavily = 'Tavily',
 }
 
 export const SwitchLogicOperatorOptions = ['and', 'or'];
@@ -250,7 +248,6 @@ export const operatorMap: Record<
   [Operator.Code]: { backgroundColor: '#4c5458' },
   [Operator.WaitingDialogue]: { backgroundColor: '#a5d65c' },
   [Operator.Agent]: { backgroundColor: '#a5d65c' },
-  [Operator.Tavily]: { backgroundColor: '#a5d65c' },
 };
 
 export const componentMenuList = [
@@ -387,7 +384,7 @@ const initialQueryBaseValues = {
 };
 
 export const initialRetrievalValues = {
-  query: AgentGlobals.SysQuery,
+  query: '',
   top_n: 8,
   top_k: 1024,
   kb_ids: [],
@@ -686,41 +683,6 @@ export const initialAgentValues = {
   },
 };
 
-export enum TavilySearchDepth {
-  Basic = 'basic',
-  Advanced = 'advanced',
-}
-
-export enum TavilyTopic {
-  News = 'news',
-  General = 'general',
-}
-
-export const initialTavilyValues = {
-  api_key: '',
-  query: AgentGlobals.SysQuery,
-  search_depth: TavilySearchDepth.Basic,
-  topic: TavilyTopic.General,
-  max_results: 5,
-  days: 7,
-  include_answer: false,
-  include_raw_content: true,
-  include_images: false,
-  include_image_descriptions: false,
-  include_domains: [],
-  exclude_domains: [],
-  outputs: {
-    formalized_content: {
-      value: '',
-      type: 'string',
-    },
-    json: {
-      value: {},
-      type: 'Object',
-    },
-  },
-};
-
 export const CategorizeAnchorPointPositions = [
   { top: 1, right: 34 },
   { top: 8, right: 18 },
@@ -847,8 +809,6 @@ export const NodeMap = {
   [Operator.Code]: 'ragNode',
   [Operator.WaitingDialogue]: 'ragNode',
   [Operator.Agent]: 'agentNode',
-  [Operator.Tool]: 'toolNode',
-  [Operator.Tavily]: 'ragNode',
 };
 
 export const LanguageOptions = [
@@ -3048,9 +3008,3 @@ export const NoDebugOperatorsList = [
   Operator.Switch,
   Operator.Iteration,
 ];
-
-export enum NodeHandleId {
-  Start = 'start',
-  End = 'end',
-  Tool = 'tool',
-}

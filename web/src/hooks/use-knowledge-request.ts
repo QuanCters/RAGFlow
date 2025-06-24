@@ -228,18 +228,11 @@ export const useUpdateKnowledge = (shouldFetchList = false) => {
   return { data, loading, saveKnowledgeConfiguration: mutateAsync };
 };
 
-export const useFetchKnowledgeBaseConfiguration = (refreshCount?: number) => {
+export const useFetchKnowledgeBaseConfiguration = () => {
   const { id } = useParams();
 
-  let queryKey: (KnowledgeApiAction | number)[] = [
-    KnowledgeApiAction.FetchKnowledgeDetail,
-  ];
-  if (typeof refreshCount === 'number') {
-    queryKey = [KnowledgeApiAction.FetchKnowledgeDetail, refreshCount];
-  }
-
   const { data, isFetching: loading } = useQuery<IKnowledge>({
-    queryKey,
+    queryKey: [KnowledgeApiAction.FetchKnowledgeDetail],
     initialData: {} as IKnowledge,
     gcTime: 0,
     queryFn: async () => {

@@ -45,7 +45,7 @@ from .embedding_model import (
     HuggingFaceEmbed,
     VolcEngineEmbed,
     GPUStackEmbed,
-    NovitaEmbed
+    NovitaEmbed,
 )
 from .chat_model import (
     GptTurbo,
@@ -129,7 +129,7 @@ from .rerank_model import (
     QWenRerank,
     GPUStackRerank,
     HuggingfaceRerank,
-    NovitaRerank
+    NovitaRerank,
 )
 
 from .sequence2txt_model import (
@@ -182,7 +182,7 @@ EmbeddingModel = {
     "HuggingFace": HuggingFaceEmbed,
     "VolcEngine": VolcEngineEmbed,
     "GPUStack": GPUStackEmbed,
-    "NovitaAI": NovitaEmbed
+    "NovitaAI": NovitaEmbed,
 }
 
 CvModel = {
@@ -249,7 +249,7 @@ ChatModel = {
     "Google Cloud": GoogleChat,
     "HuggingFace": HuggingFaceChat,
     "GPUStack": GPUStackChat,
-    "ModelScope":ModelScopeChat,
+    "ModelScope": ModelScopeChat,
 }
 
 RerankModel = {
@@ -270,7 +270,7 @@ RerankModel = {
     "Tongyi-Qianwen": QWenRerank,
     "GPUStack": GPUStackRerank,
     "HuggingFace": HuggingfaceRerank,
-    "NovitaAI": NovitaRerank
+    "NovitaAI": NovitaRerank,
 }
 
 Seq2txtModel = {
